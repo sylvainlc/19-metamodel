@@ -1,0 +1,439 @@
+\documentclass[nolayout]{article}
+\usepackage[english]{babel}
+\usepackage{graphicx,xcolor,xargs,twoopt}
+\usepackage{framed}
+\usepackage[normalem]{ulem}
+\usepackage[active]{srcltx}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{enumerate}
+\usepackage[utf8]{inputenc}
+
+%\newcommand{\rset}{\mathbb{R}}
+\newcommand{\sfV}{\mathsf{V}}
+\newcommand{\eqsp}{\,}
+\newcommand{\xim}{\mathbf{X}}
+\newcommand{\param}{\theta}
+
+%LSTM commands
+\newcommand{\inputg}{\mathsf{i}}
+\newcommand{\forgetg}{\mathsf{f}}
+\newcommand{\outputg}{\mathsf{o}}
+\newcommand{\cellg}{\mathsf{u}}
+\newcommand{\memoryg}{\mathsf{c}}
+
+\def\dimX{d}
+\def\dimY{m}
+%\def\Xset{\mathbb{R}^{\dimX}}
+%\def\Yset{\mathbb{R}^{\dimY}}
+\def\Xset{\mathsf{X}}
+\def\Yset{\mathsf{Y}}
+\newcommand{\mk}{\kernel{G}}
+\newcommand{\hk}{\kernel{Q}}
+\newcommand{\md}[1]{g_{#1}}
+
+\newcommand{\logllh}[1]{\ell_{#1}}
+\newcommand{\llh}[1]{\mathcal{L}_{#1}}
+\newcommand{\testf}{\mathsf{h}}
+
+\newcommandx\filtderiv[2][1=]{
+\ifthenelse{\equal{#1}{}}
+	{\eta_{#2}}
+	{\eta_{#2}^\N}
+}
+\newcommand{\pred}[1]{\pi_{#1}}
+\newcommand{\parvec}{\theta}
+\newcommand{\parspace}{\Theta}
+\newcommand{\tstatletter}{\kernel{T}}
+\newcommand{\retrok}{\kernel{D}}
+\newcommandx\tstat[2][1=]{
+\ifthenelse{\equal{#1}{}}
+	{\tstatletter_{#2}}
+	{\tau_{#2}^{#1}}
+}
+\newcommandx\tstathat[2][1=]{
+\ifthenelse{\equal{#1}{}}
+	{\tstatletter_{#2}}
+	{\widehat{\tau}_{#2}^{#1}}
+}
+\newcommand{\af}[1]{h_{#1}} 
+\newcommand{\deriv}{\nabla_{\parvec}}
+
+\newcommand{\kernel}[1]{\mathbf{#1}}
+\newcommand{\bmf}[1]{\set{F}(#1)}
+\newcommand{\set}[1]{\mathsf{#1}}
+
+\newcommandx{\bk}[2][1=]{ 
+\ifthenelse{\equal{#1}{}}
+{\overleftarrow{\kernel{Q}}_{#2}}
+{\overleftarrow{\kernel{Q}}_{#2}^{#1}}
+}
+
+\newcommandx{\bkhat}[2][1=]{ 
+\ifthenelse{\equal{#1}{}}
+{\widehat{\kernel{Q}}_{#2}}
+{\widehat{\kernel{Q}}_{#2}^{#1}}
+}
+
+\newcommand{\lk}{\kernel{L}}
+\newcommand{\idop}{\operatorname{id}}
+\newcommand{\hd}[1]{q_{#1}} 
+\newcommand{\hdhat}[1]{\widehat{q}_{#1}} 
+
+
+\newcommand{\addf}[1]{\termletter_{#1}}
+\newcommand{\addfc}[1]{\underline{\termletter}_{#1}}
+\newcommand{\adds}[1]{\af{#1}}
+\newcommand{\term}[1]{\termletter_{#1}}
+\newcommand{\termletter}{\tilde{h}}
+\newcommand{\N}{N}
+\newcommand{\partpred}[1]{\pi_{#1}^\N}
+\newcommand{\tstattil}[2]{\tilde{\tau}_{#2}^{#1}}
+\newcommandx{\K}[1][1=]{
+\ifthenelse{\equal{#1}{}}{{\kletter}}{{\widetilde{\N}^{#1}}}}
+\newcommand{\hkup}{\overline{M}}
+\newcommand{\bi}[3]{J_{#1}^{(#2, #3)}}
+\newcommand{\bihat}[3]{\widehat{J}_{#1}^{(#2, #3)}}
+
+\newcommand{\kletter}{\widetilde{\N}}
+
+\def\sigmaX{\mathcal{X}}
+\def\sigmaY{\mathcal{Y}}
+\def\1{\mathds{1}}
+\def\pE{\mathbb{E}}
+\def\pP{\mathbb{P}}
+\def\plim{\overset{\pP}{\longrightarrow}}
+\def\dlim{\Longrightarrow}
+\def\gauss{\mathcal{N}}
+
+
+\newcommand{\esssup}[2][]
+{\ifthenelse{\equal{#1}{}}{\left\| #2 \right\|_\infty}{\left\| #2 \right\|^2_{\infty}}}
+
+
+\newcommand{\swght}[2]{\ensuremath{\omega_{#1}^{#2}}}
+
+\newtheorem{assumptionA}{\textbf{A}\hspace{-3pt}}
+\newcommand{\rset}{\ensuremath{\mathbb{R}}}
+\newcommand{\iid}{i.i.d.}
+
+\newcommand{\smwght}[3]{\tilde{\omega}_{#1|#2}^{#3}}
+\newcommand{\smwghtfunc}[2]{\tilde{\omega}_{#1|#2}}
+
+\newcommand{\smpart}[3]{\ensuremath{\tilde{\xi}_{#1|#2}^{#3}}}
+\def\aux{{\scriptstyle{\mathrm{aux}}}}
+\newcommand{\bdm}{\mathsf{TwoFilt}_{bdm}}
+\newcommand{\fwt}{\mathsf{TwoFilt}_{fwt}}
+
+\newcommand{\kiss}[3][]
+{\ifthenelse{\equal{#1}{}}{r_{#2|#3}}
+{\ifthenelse{\equal{#1}{fully}}{r^{\star}_{#2|#3}}
+{\ifthenelse{\equal{#1}{smooth}}{\tilde{r}_{#2|#3}}{\mathrm{erreur}}}}}
+
+\newcommand{\chunk}[4][]%
+{\ifthenelse{\equal{#1}{}}{\ensuremath{{#2}_{#3:#4}}}{\ensuremath{#2^#1}_{#3:#4}}
+}
+
+\newcommand{\kissforward}[3][]
+{\ifthenelse{\equal{#1}{}}{p_{#2}}
+{\ifthenelse{\equal{#1}{fully}}{p^{\star}_{#2}}
+{\ifthenelse{\equal{#1}{smooth}}{\tilde{r}_{#2}}{\mathrm{erreur}}}}}
+
+\newcommand{\instrpostaux}[1]{\ensuremath{\upsilon_{#1}}}
+\newcommandx\post[2][1=]{
+\ifthenelse{\equal{#1}{}}
+	{\phi_{#2}}
+	{\phi_{#2}^\N}
+}
+
+\newcommandx\posthat[2][1=]{
+\ifthenelse{\equal{#1}{}}
+	{\widehat{\phi}_{#2}}
+	{\widehat{\phi}_{#2}^\N}
+}
+
+\newcommand{\adjfunc}[4][]
+{\ifthenelse{\equal{#1}{}}{\ifthenelse{\equal{#4}{}}{\vartheta_{#2|#3}}{\vartheta_{#2|#3}(#4)}}
+{\ifthenelse{\equal{#1}{smooth}}{\ifthenelse{\equal{#4}{}}{\tilde{\vartheta}_{#2|#3}}{\tilde{\vartheta}_{#2|#3}(#4)}}
+{\ifthenelse{\equal{#1}{fully}}{\ifthenelse{\equal{#4}{}}{\vartheta^\star_{#2|#3}}{\vartheta^\star_{#2|#3}(#4)}}{\mathrm{erreur}}}}}
+
+\newcommand{\XinitIS}[2][]
+{\ifthenelse{\equal{#1}{}}{\ensuremath{\rho_{#2}}}{\ensuremath{\check{\rho}_{#2}}}}
+\newcommand{\adjfuncforward}[1]{\vartheta_{#1}}
+\newcommand{\rmd}{\ensuremath{\mathrm{d}}}
+\newcommand{\eqdef}{\ensuremath{:=}}
+%\newcommand{\eqsp}{\;}
+\newcommand{\ewght}[2]{\ensuremath{\omega_{#1}^{#2}}}
+\newcommand{\ewghthat}[2]{\ensuremath{\widehat{\omega}_{#1}^{#2}}}
+\newcommand{\epart}[2]{\ensuremath{\xi_{#1}^{#2}}}
+\newcommand{\filt}[2][]%
+{%
+\ifthenelse{\equal{#1}{}}{\ensuremath{\phi_{#2}}}{\ensuremath{\phi_{#1,#2}}}%
+}
+\newcommand{\Xinit}{\ensuremath{\chi}} 
+
+\newcommand{\sumwght}[2][]{%
+\ifthenelse{\equal{#1}{}}{\ensuremath{\Omega_{#2}}}{\ensuremath{\Omega_{#2}^{(#1)}}}}
+\newcommand{\sumwghthat}[2][]{%
+\ifthenelse{\equal{#1}{}}{\ensuremath{\widehat{\Omega}_{#2}}}{\ensuremath{\widehat{\Omega}_{#2}^{(#1)}}}}
+
+\newcounter{hypH}
+\newenvironment{hypH}{\refstepcounter{hypH}\begin{itemize}
+\item[{\bf H\arabic{hypH}}]}{\end{itemize}}
+
+\newcommand{\marginalset}{\mathsf{Z}}
+
+\newcommand{\calF}[2]{\mathcal{F}_{#1}^{#2}}
+\newcommand{\calG}[2]{\mathcal{G}_{#1}^{#2}}
+\newcommand{\Uset}{\mathsf{U}}
+\newcommand{\tcalF}[2]{\widetilde{\mathcal{F}}_{#1}^{#2}}
+\newcommand{\tcalG}[2]{\widetilde{\mathcal{G}}_{#1}^{#2}}
+
+\newcommand{\kernelmarg}{\mathsf{R}}
+
+\newcommand{\pplim}{\overset{\pP}{ \underset{\N \to \infty}{\longrightarrow}}}
+\newcommand{\ddlim}{\overset{\mathcal{D}}{ \underset{\N \to \infty}{\longrightarrow}}}
+\newcommand{\aslim}{\overset{\pP\mathrm{-a.s.}}{ \underset{\N \to \infty}{\longrightarrow}}}
+
+\newcommand{\qg}[1]{\mathsf{r}_{#1}}
+\newcommand{\hatqg}[1]{\widehat{\mathsf{r}}_{#1}}
+
+\def\nhead{n_{\mathsf{heads}}}
+\def\nlayer{n_{\mathsf{layers}}}
+\newcommand{\paramobs}{\theta_{\mathsf{obs}}}
+\newcommand{\paramattention}{\theta_{\mathsf{att}}}
+
+\title{Transformers metamodels to predict thermal behavior of large buildings}
+\date{}
+\begin{document}
+
+\maketitle
+
+\section{Transformers based metamodels for partially observed time series}
+\label{sec:smctransformers}
+Let $\nhead\geqslant 1$ and $\nlayer\geqslant 1$ be the numbers or heads and of layers of the considered transformer network. Let $(X_k)_{k\geqslant 0}$ be the state of the building i.e. the inside temperatures and the consumptions of the building management system. The index $k$ denotes time and, in the setting of this paper, data are collected each hour. The aim of the metamodel introduced in this paper is to provide a numerically efficient solution to predict this state from other variables and external observations such as meteorological data. The building is described by several sets of parameters.
+\begin{enumerate}[-]
+\item a parameter $\theta$ containing the geometrical description of the buildings (walls areas, windows area ratio on each wall, etc.). \\
+\textcolor{red}{Maurice, Alain: exhaustive list, parameters + names in the Python model}.
+\item A sequence $(Z_k)_{k\geqslant 0}$ providing at each hour the building management system variables (comfort and reduced temperatures for each component (heating, cooling) and the occupancy (either 0/1 or described as a percentage of a given maximum number).
+\item a parameter $\eta$ containing other fixed parameters describing the building, unknwon to the energy managers and requiring calibration (capacitance, airchange infiltration, etc.). \\
+\textcolor{red}{Maurice, Alain: exhaustive list, parameters + names in the Python model}.
+\end{enumerate}
+\textcolor{red}{The items above provide all the information necessary to run TRNSYS, either fixed parameters given by Alain or parameters with a given range. This part needs to be validated by Maurice and Alain before building the dataset and calibrating the metamodel.}
+
+Following \cite{}, the self-attention mechanism at the core of transformers approaches can be updated recursively each time a new observation is available to define a dynamical model of the building. 
+
+\paragraph{Layers level 0.} 
+Set $R = (\theta,\eta)\in\rset^d$ and compute the initial linear tranform of $R$, 
+$$
+q_0^{h}(1) =  W_{0,R}^{h,q} R\eqsp,\quad \kappa_0^{h}(1) =  W_{0,R}^{h,\kappa} R\eqsp,\quad v_0^{h}(1) =  W_{0,R}^{h,v} R \eqsp,
+$$
+where $W_{0,R}^{h,q}$, $W_{0,R}^{h,\kappa}$ and $W_{0,R}^{h,v}$ are unknown $r\times d$ matrices (parameters of the metamodel to be estimated, $r$ chosen by the user). Similar linear transorfmations are computed for the input data $(\xi_j = (X_j,Z_j))_{1\leqslant j \leqslant p}$. These input data correspond to the $p$ past states of the system which are used to predic the next state. For $1\leqslant j\leqslant p$,
+$$
+q_0^{h}(j+1) =  W_{0,\xi}^{h,q} \xi_j\eqsp,\quad \kappa_0^{h}(j+1) =  W_{0,\xi}^{h,\kappa} \xi_j\eqsp,\quad v_0^{h}(j+1) =  W_{0,\xi}^{h,v} \xi_j \eqsp,
+$$
+where $W_{0,\xi}^{h,q}$, $W_{0,\xi}^{h,\kappa}$ and $W_{0,\xi}^{h,v}$ are unknown $r\times q$ matrices, where $q$ is the dimension of $\xi_j$.
+Then, let $K_0$ denote the matrix whose columns are $\kappa_0^h(j)$, $0\leqslant j\leqslant p$,  and compute for all $0\leqslant j\leqslant p$,
+$$
+s_0^{h,j} = (q_0^{h}(j))^TK_{0}^{h} \quad\mbox{and}\quad \pi_0^{h,j}= \sigma(s_0^{h,j}/\sqrt{r})\eqsp,
+$$
+%\begin{align*}
+%s_R = q_R^TK_{0} \quad&\mbox{and}\quad \pi_R = \sigma(s_R/\sqrt{r})\eqsp,\\
+%s_{Z_0} = q_{Z_0}^TK_{0} \quad&\mbox{and}\quad \pi_{Z_0} = \sigma(s_{Z_0}/\sqrt{r})\eqsp,\\
+%s_{X_0} = q_{X_0}^TK_{0} \quad&\mbox{and}\quad \pi_{X_0} = \sigma(s_{X_0}/\sqrt{r})\eqsp,
+%\end{align*}
+where $\sigma$ is the softmax function. Finally, self-attention of the input data for each head is computed as
+$$
+z_0^{h}(j) =  \sum_{\ell=0}^{p+1}\pi_0^{h,j}(\ell)v^h_{0}(\ell)\eqsp.
+$$
+
+
+
+\paragraph{Iterations through layers.}
+For all $0\leqslant \ell\leqslant \nlayer-2$, layer $\ell+1$ if fed by the $p+1$ vectors $z_\ell = (z_{\ell}^1,\ldots, z_{\ell}^{\nhead})$ and a feed forward neural network with parameter $\paramattention$ is used to produce the input data of layer $\ell+1$:
+$$
+r_\ell= F_{\paramattention}(z_{\ell})\eqsp,
+$$
+where $r_\ell\in\rset^{d\times q}$.
+For all $1\leqslant j\leqslant q$  and all $1\leqslant h\leqslant \nhead$, compute
+$$
+q_{\ell+1}^{h}(j) =  W_{\ell+1}^{h,q} r_\ell(j) \eqsp,\quad \kappa_{\ell+1}^{h}(j) =   W_{\ell+1}^{h,\kappa} r_\ell(j) \eqsp,\quad v_{\ell+1}^{h}(j) =   W_{\ell+1}^{h,v} r_\ell(j) \eqsp,
+$$
+where $W_{\ell+1}^{h,q}$, $ W_{\ell+1}^{h,\kappa}$ and $ W_{\ell+1}^{h,v}$ are $r\times d$ matrices.
+Then, the score and self attention vectors are computed similarly to what is done in Layer 0.
+
+\paragraph{Prediction.}
+Then, the {\em decoder} model provides the prediction of the next observation $X_{p+1}$ based on the self-attention vectors:  a feed forward neural network with parameter $\paramobs$ is used as obervation model:
+$$
+p_{\theta}(X_{p+1}|z_{\nlayer-1}) = G_{\paramobs}(z_{\nlayer-1})\eqsp.
+$$
+
+
+
+\section{Transformers:  sequential Monte Carlo forward model}
+\label{sec:smctransformers:forward}
+\textcolor{red}{To be refined later - uncertainty quantification using Monte Carlo if the first metamodel is promising. Maybe the topic of a second paper.}
+The exact and deterministic computations of such transformers  procedures do not take into account model noise and uncertainty. In this paper, a state space approach is proposed to approximate the distribution of the hidden attention using sequential Monte Carlo methods. The usual attention vectors are replaced by a set of random samples associated with nonnegative importance weights. These particle filters and smoothers approximations combine sequential importance sampling steps to update recursively the attention vectors and importance resampling steps to duplicate or discard particles according to their importance weights.
+%\paragraph{Initialization}
+%%Use a prior distribution $\rho$ on the set of word embeddings in the selected vocabulary. Then, for all $1\leqslant \ell \leqslant M$, sample $j[\ell]$ with distribution $\rho$ and set $X_0[\ell]$ as the word embedding with index $j[\ell]$.
+%For all $1\leqslant \ell \leqslant M$, initialize $q_0[\ell]$, $\kappa_0[\ell]$ and $
+%v_0[\ell]$ in $\rset^r$. Self-attention is computed, for all $1\leqslant  \ell \leqslant M$, as,
+%$$ 
+%z_0[\ell] = v_{0}[\ell]\eqsp.
+%$$
+%Compute
+%$$
+%\omega_k[\ell] = F_{\eta}(z_{0}[\ell])_{\mathsf{emb}(Y_0)}\eqsp,
+%$$
+%where $F_{\eta}$ is the {\em decoder} model which provides a probability vector on the vocabulary based on the self-attention vectors. %Set for instance $X_0[\ell]$ as the word in the vocabulary with highest probability: $\mathrm{argmax}\,F_{\eta}(z_{1:q},z_{0}[\ell])$.
+%
+%\paragraph{Iterations}
+%For each $k\geqslant 1$, $1\leqslant \ell \leqslant M$,
+%\begin{enumerate}[-]
+%\item Sample $I_k[\ell]\in\{1,\ldots,M\}$ with probabilities proportional to $\omega_{k-1}[\ell]$.
+%\item Sample $X_{k-1}[I_k[\ell]]$, the embedding of a selected word at the previous position, with probabilities given by $\left\{F_{\eta}(z_{0:k-1}[I_k[\ell]])\right\}(j)$, $1\leqslant j\leqslant p$, i.e  $X_{k-1}[I_k[\ell]] = \mathsf{w}_j$ with probability $\left\{F_{\eta}(z_{0:k-1}[I_k[\ell]])\right\}(j)$. Then, write 
+%$$
+%q_k[\ell] =  W^q X_{k-1}[I_k[\ell]]\eqsp,\quad \kappa_k[\ell] =  W^\kappa X_{k-1}[I_k[\ell]]\eqsp,\quad v_k[\ell] =  W^v X_{k-1}[I_k[\ell]] \eqsp,
+%$$
+%where $W^q$, $W^\kappa$ and $W^v$ are $r\times p$ unknown weight matrices. Then, $1\leqslant \ell \leqslant M$ ,
+%$$
+%s_k[\ell] = (q_k[\ell])^TK_{0:k}[\ell] \quad\mbox{and}\quad \pi_k[\ell] = \sigma(s_k[\ell]/\sqrt{r})\eqsp,
+%$$
+%where $K_{0:k}[\ell]$ is the $r\times (k+1)$ matrix whose columns are the $\kappa_i$, $1\leqslant i \leqslant q$ and the $\kappa_{0:k}[\ell]$ associated with the ancestral genealogy selected with $I_k[\ell]$. Finally, self-attention of the input data is computed, for all $1\leqslant  \ell \leqslant M$, as,
+%$$
+%z_k[\ell] = \sum_{j=0}^{k}\pi_k[\ell](j)v_{0:k}[\ell](j) + \varepsilon_{k}[\ell]\eqsp,
+%$$
+%where $(\varepsilon^z_{k}[\ell])_{1\leqslant \ell \leqslant M}$ are independent with Gaussian distribution $\mathcal{N}(0,\Sigma^z)$
+%and $v_{0:k}[\ell](j)$ is the vector $v_{j}$  associated with the ancestral genealogy selected with $I_k[\ell]$.
+%\item Compute
+%$$
+%\omega_k[\ell] = F_{\eta}(z_{0:k}[\ell])_{\mathsf{emb}(Y_k)}\eqsp,
+%$$
+%where $F_{\eta}$ is the {\em decoder} model which provides a probability vector on the vocabulary based on the self-attention vectors.% Set for instance $X_k[\ell]$ as the word in the vocabulary with highest probability: $\mathrm{argmax}\,F_{\eta}(z_{0:k}[\ell])$.
+%\end{enumerate}
+%For all $k\geqslant 0$, denote by $s_k$ the extended state $s_k = (q_k,\kappa_k,v_k,z_k)$. Using Fisher's identity,
+%\begin{equation}
+%\label{eq:fisher}
+%\nabla_{\theta} \log p(Y_{0:k}) = \mathbb{E}_{\theta}[\nabla_{\theta} \log p(S_{0:k},Y_{0:k})|Y_{0:k}]\eqsp,
+%\end{equation}
+%where $\theta$ is the unknown parameter to be estimated. Then, note that
+%$$
+%p_{\theta}(S_{0:k},Y_{0:k}) = p_{\theta}(S_{0:k-1},Y_{0:k-1})p_{\theta}(S_k|S_{0:k-1},Y_{0:k-1})p_{\theta}(Y_k|S_{0:k},Y_{0:k-1})\eqsp,
+%$$ 
+%where
+%\begin{align*}
+%p_{\theta}(S_k|S_{0:k-1},Y_{0:k-1}) &= \sum_{j=1}^pF_{\eta}(z_{0:k-1})_j\delta_{W^q\mathsf{w}_j}(q_k)\delta_{W^v\mathsf{w}_j}(v_k)\delta_{W^\kappa \mathsf{w}_j}(\kappa_k) \\
+%&\hspace{1cm}\times\mathrm{det}\left(2\pi \Sigma^v\right)^{-1/2}\mathrm{exp}\left(- \frac{1}{2}\left(z_k - \mu_k\right)^T(\Sigma^z)^{-1}\left(z_k - \mu_k\right)\right)\eqsp,\\
+%p_{\theta}(Y_k|S_{0:k},Y_{0:k-1}) &= F_{\eta}(z_{0:k})_{\mathsf{emb}(Y_k)}\eqsp,
+%\end{align*}
+% with
+%$$
+%\mu_k = \sum_{j=0}^{k}\pi_k(j)v_{j}\eqsp.
+%$$
+%At each time $k$, let $\alpha_k[\ell]$ be the value of $\nabla_{\theta} \log p(S_{0:k}[\ell],Y_{0:k})$ associated with the $\ell$-th trajectory. 
+%%The log-transition density of the attention vector at time $k$ is given by
+%%$$
+%%\log m_k(\tilde z_{0:k-1};z_k) = -\frac{1}{2}\log\mathrm{det}\left(2\pi \Sigma^v\right) - \frac{1}{2}\left(z_k - \mu_k\right)^T(\Sigma^z)^{-1}\left(z_k - \mu_k\right)\eqsp,
+%%$$
+%%where $\tilde z_{0:k-1} = (z_{0:k-1},v_{0:k-1},\kappa_{0:k-1})$. On the other hand, given the all attention vectors up to time $k$, the conditional log-density of the $k$-th word is 
+%%$$
+%%\log g_k(y_k;z_{0:k}) = \left\{\log F_{\theta}(z_{0:k}[\ell])\right\}(y_k)\eqsp.
+%%$$
+%By \eqref{eq:fisher}, for all $k\geqslant 1$, the estimation of the score function $\nabla\log p(y_{0:k})$ is
+%$$
+%S_k = \sum_{\ell=1}^M \omega_k[\ell]\alpha_k[\ell]
+%$$
+%where
+%$$
+%\alpha_k[\ell] = \alpha_{k-1}[I_k[\ell]] + \nabla_{\theta} \log p_{\theta}(S_k[\ell]|S_{0:k-1}[\ell],Y_{0:k-1})  + \nabla_{\theta} \log p_{\theta}(Y_k|S_{0:k}[\ell],Y_{0:k-1})\eqsp.
+%$$
+%
+%
+%\section{Uncertainty estimation using sequential Monte Carlo methods}
+%\subsection{Sequential Monte Carlo methods for latent data models}
+Let $n$ be a positive integer and $\Xset$ and $\Yset$ two general state spaces. Consider a distribution $\chi$ on $\mathcal{B}(\Xset)$ and the Markov transition kernels $(\hk_{k})_{0\leqslant k \leqslant n-1}$ on $\Xset\times \mathcal{B}(\Xset)$ and $(\mk_{k})_{0\leqslant k \leqslant n-1}$ on $\Xset\times \mathcal{B}(\Yset)$. Throughout this paper, for  all $0\leqslant k \leqslant n-1$, $\mk_{k}$  has a density $\md{k}$ with respect to a reference measure $\nu$ on $\mathcal{B}(\Yset)$. In the following, $\bmf{\mathsf{Z}}$ denotes the set of real valued measurable functions defined on the set $\mathsf{Z}$. Let $(Y_k)_{1\leqslant k\leqslant n}$ be a sequence of observations in $\Yset$ and define the joint smoothing distributions, for any $0 \leqslant k_1 \leqslant k_2 \leqslant n$ and any function $h\in \bmf{\Xset^{k_2 - k_1 +1}}$,  by:
+\begin{equation}
+\label{eq:smooth}
+\post{k_1:k_2 \mid n}[h] \eqdef \llh{n}^{-1}(Y_{1:n})\int \chi(\rmd x_0)\prod_{k=0}^{n-1}\hk_{k}(x_{k},\rmd x_{k+1})\md{k}(x_{k+1},Y_{k+1})h(x_{k_1:k_2})\eqsp,
+\end{equation}
+where  $a_{u:v}$ is a short-hand notation for $(a_u,\ldots,a_v)$ and
+\begin{equation}
+\label{eq:likelihood}
+\llh{n}(Y_{1:n})  = \int \chi(\rmd x_0)\prod_{k=0}^{n-1}\hk_{k}(x_{k},\rmd x_{k+1})\md{k}(x_{k+1},Y_{k+1})
+\end{equation}
+is the observed data likelihood. 
+For all $0\leqslant k \leqslant n-1$, $\hk_{k}$ has a density $\hd{k}$ with respect to a reference measure $\mu$ on $\mathcal{B}(\Xset)$. The initial measure $\chi$ is also assumed to have a density with respect to $\mu$ which is also referred to as $\chi$. 
+For all $0\leqslant k\leqslant n$, $\post{k}=\post{k:k\mid k}$ are the filtering distributions, $\pred{k+1}=\post{k+1:k+1\mid k}$ are the one-step predictive distributions, while $\post{k\mid n}=\post{k:k\mid n}$ are the marginal smoothing distributions. 
+
+%In the context of hidden Markov models, the conditional distributions of sequences of hidden states given some observations can be expressed using \eqref{eq:smooth}.
+ Consider a latent  Markov chain $(X_k)_{0\leqslant k\leqslant n}$  with initial distribution $\chi$ and Markov transition kernels $(\hk_{k})_{0\leqslant k \leqslant n-1}$. The states $(X_k)_{0\leqslant k\leqslant n}$ are not available so that any statistical inference procedure is performed using the sequence of observations $(Y_k)_{1 \leqslant k\leqslant n}$ only. The observations are assumed to be independent conditional on $(X_k)_{0\leqslant k\leqslant n}$ and such that for all $1\leqslant\ell \leqslant n$ the distribution of $Y_\ell$ given $(X_k)_{0\leqslant k\leqslant n}$ has distribution $\mk_{k}(X_k,\cdot)$. In this case, \eqref{eq:smooth} may be interpreted as:
+\[
+\post{k_1:k_2 \mid n}[h]  = \pE_{}\left[h(X_{k_1:k_2})\middle | Y_{1:n}\right]\eqsp.
+\]
+Note that, when for all $0\leqslant k \leqslant n -1$, if $\md{k}$ only depends on its last two arguments, \eqref{eq:likelihood} is the likelihood of a standard hidden Markov model.  In such models, computing \eqref{eq:smooth} allows to solve classical problems such as:  
+\begin{enumerate}
+\item[i)] path reconstruction, i.e. the reconstruction of the hidden states given the observations;
+\item[ii)] parameter inference, i.e., when $\hd{k}$ and $\md{k}$ depend on some unknown parameter $\parvec$, the design of a consistent estimator of $\theta$ from the observations.
+\end{enumerate}
+As  \eqref{eq:smooth} is, in general, not available explicitly,  this section focuses on sequential Monte Carlo based approximations.
+\paragraph{Particle filtering to estimate $\post{k}^\N$.} Let $(\epart{0}{\ell})_{\ell = 1}^\N$ be independent and identically distributed according to the instrumental proposal density $\rho_0$ on $\Xset$ and define the importance weights:
+\[
+\ewght{0}{\ell} \eqdef \frac{\Xinit(\epart{0}{\ell})}{\XinitIS{0}(\epart{0}{\ell})}\eqsp.
+\]
+For any  $f\in \bmf{\Xset}$,
+\begin{align*}
+\post{0}^\N[f]&\eqdef \sumwght{0}^{-1}\sum_{\ell=1}^\N \ewght{0}{\ell}f(\epart{0}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{0}\eqdef \sum_{\ell=1}^N \ewght{0}{\ell}\eqsp,\\
+\partpred{0}[f] &\eqdef \frac{1}{\N} \sum_{i=1}^{\N} f(\epart{0}{i})
+\end{align*}
+are consistent estimators of $\post{0}[f]$ and $\pred{0} [f]$, see for instance \cite{delmoral:2004}. Then, for all $k\geqslant 1$, once the observation $Y_k$ is available, the weighted particle sample $\{(\ewght{k-1}{\ell},\epart{k-1}{\ell})\}_{\ell=1}^{\N}$ is transformed into a new weighted (resp. uniformly weighted) particle sample approximating $\post{k}$ (resp. $\pred{k}$). This update step is carried through in two steps, \emph{selection} and \emph{mutation},  using the auxiliary sampler introduced in \cite{pitt:shephard:1999}. New indices and particles $\{ (I_k^{\ell}, \epart{k}{\ell}) \}_{\ell = 1}^\N$ are simulated independently from the instrumental distribution with density on $\{1, \dots, \N\} \times \Xset$:
+\begin{equation} 
+\label{eq:instrumental-distribution-filtering}
+\instrpostaux{k}(\ell,x) \propto \ewght{k-1}{\ell} \adjfuncforward{k-1}(\epart{k-1}{\ell}) \kissforward{k-1}{k-1}(\epart{k-1}{\ell},x) \eqsp,
+\end{equation}
+where $\adjfuncforward{k-1}$ is an adjustment multiplier weight function and $\kissforward{k-1}{k-1}$ a Markovian transition density. For any  $\ell \in\{1, \dots, \N\}$, $\epart{k}{\ell}$ is associated with the  importance weight defined by:
+\begin{equation}
+\label{eq:weight-update-filtering}
+    \ewght{k}{\ell} \eqdef \frac{\hd{k-1}(\epart{k-1}{I_k^{\ell}},\epart{k}{\ell})\md{k}(\epart{k}{\ell},Y_{k})}{\adjfuncforward{k-1}(\epart{k-1}{I_k^{\ell}}) \kissforward{k-1}{k-1}(\epart{k-1}{I_k^{\ell}},\epart{k}{\ell})}
+\end{equation}
+to produce the following approximation of $\post{k}[f]$ and $\pred{k}[f]$:
+\begin{align*}
+\post{k}^\N[f]&\eqdef \sumwght{k}^{-1}\sum_{\ell=1}^N \ewght{k}{\ell}f(\epart{k}{\ell})\eqsp,\quad\mbox{where}\quad\sumwght{k}\eqdef \sum_{\ell=1}^\N \ewght{k}{\ell}\eqsp,\\
+\partpred{k}[f] &\eqdef \frac{1}{\N} \sum_{i=1}^{\N} f(\epart{k}{i})\eqsp.
+\end{align*}
+For all $k\ge 0$ and all $(x, f) \in \Xset \times \bmf{\Xset}$, replacing $\post{k}$ by $\post{k}^N$ in \eqref{eq:bk:kernel}, $\bk{\post{k}}f(x)$ is approximated by: 
+\begin{equation} 
+	\bk{\post[part]{k}}f(x) = \sum_{i=1}^{\N} \frac{\ewght{k}{i} \qg{k}(\epart{k}{i},x)}{\sum_{\ell =1}^{\N} \ewght{k}{\ell} \qg{k}(\epart{k}{\ell},x)}f(\epart{k}{i})\eqsp.  
+\label{eq:bk:part}
+\end{equation}
+The forward-filtering  backward-smoothing (FFBS) algorithm proposed in \cite{delmoral:doucet:singh:2010} consists in replacing, in \eqref{eq:tstat:update}, $\bk{\post{k}}$ by the approximation $\bk{\post[part]{k}}$. Proceeding recursively, this produces a sequence of estimates $(\tstattil{i}{k})_{i=1}^{\N}$ of $(\tstat{k}\af{k}(\epart{k}{i}))_{i=1}^{\N}$ for $0\leqslant k\leqslant n$. Starting with $\tstattil{i}{0} = 0$ for all $1\leqslant i \leqslant \N$, this yields for all $0\leqslant k\leqslant n-1$:
+\begin{equation}
+\label{eq:update:FFBSm}
+\tstattil{i}{k+1} = \sum_{j = 1}^{\N} \frac{\ewght{k}{j} \qg{k}(\epart{k}{j}, \epart{k+1}{i})}{\sum_{\ell = 1}^{\N} \ewght{k}{\ell} \qg{k}(\epart{k}{\ell}, \epart{k+1}{i}) }\left( \tstattil{j}{k} + \addf{k}(\epart{k}{j}, \epart{k+1}{i}) \right)\eqsp. 
+\end{equation}
+Then, at each iteration $0\le k \le n-1$, $\post{0:k+1 \mid k}[\af{k+1}]$ and $\post{0:k+1 \mid k+1}[\af{k+1}]$ are approximated by
+$$
+\post{0:k+1 \mid k}^{\N,\textrm{FFBS}} [\af{k+1}] \eqdef \frac{1}{\N} \sum_{i=1}^{\N} \tstattil{i}{k+1} \quad \mathrm{and}\quad \post{0:k+1 \mid k+1}^{N,\textrm{FFBS}} [\af{k+1}] \eqdef \sum_{i=1}^{\N} \frac{\ewght{k+1}{i}}{\sumwght{k+1}}\tstattil{i}{k+1}\eqsp.
+$$
+The computational complexity of the update \eqref{eq:update:FFBSm} grows \emph{quadratically} with the number of particles $\N$. This computational cost can be reduced following \cite{olsson:westerborn:2014b} by first replacing \eqref{eq:update:FFBSm} by the Monte Carlo estimate
+\begin{equation}
+\label{eq:update:paris}
+\tstat[i]{k+1} = \frac{1}{\K} \sum_{j=1}^{\K} \left( \tstat[\bi{k+1}{i}{j}]{k} + \addf{k}(\epart{k}{\bi{k+1}{i}{j}}, \epart{k+1}{i})\right)\eqsp, 
+\end{equation}
+where the sample size $\K\ge 1$ is typically small compared to $\N$ and $(\bi{k+1}{i}{j})_{j=1}^{\K}$ are i.i.d. samples in $\{1,\ldots,N\}$ with probabilities proportional to $(\ewght{k}{\ell} \qg{k}(\epart{k}{\ell}, \epart{k+1}{i}))_{\ell=1}^{\N}$. In the resulting Particle Rapid Incremental smoother (PaRIS) algorithm, the updated $(\tstat[i]{k+1})_{i=1}^{\N}$, estimates of $\post{0:k+1 \mid k}[\af{k+1}] = \pred{k + 1 }[\tstat{k+1} \af{k+1}]$ and $\post{0:k+1 \mid k+1}[\af{k+1}] = \pred{k + 1 }[\tstat{k+1} \af{k+1}]$ are obtained as:
+\[
+\post{0:k+1 \mid k}^{\N,\mathrm{PaRIS}} [\af{k}] \eqdef \frac{1}{\N} \sum_{i=1}^{\N} \tstat[i]{k+1} \quad \mathrm{and}\quad \post{0:k+1 \mid k}^{\N,\textrm{PaRIS}} [\af{k+1}] \eqdef \sum_{i=1}^{\N}\frac{\ewght{k+1}{i}}{\sumwght{k+1}}\tstat[i]{k+1}\eqsp.
+\]
+The computational complexity of this approach is still of order $\N^2$ since it requires the normalising constant $\sum_{\ell = 1}^\N \ewght{k}{\ell} \qg{k}(\epart{k}{\ell}, \epart{k+1}{i})$ to sample $(\bi{k+1}{i}{j})_{j=1}^{\K}$ for all particle $\epart{k+1}{i}$, $1\le i \le N$. A faster algorithm is obtained by applying the accept-reject sampling approach proposed in~\cite{douc:garivier:moulines:olsson:2010} and illustrated in \cite{dubarry:lecorff:2011} which presupposes that there exists a constant $\hkup > 0$ such that $\qg{k} (x,x') \leq \hkup$ for all $(x, x') \in \Xset\times \Xset$. Then, in order to sample from $(\ewght{k}{\ell} \qg{k} (\epart{k}{\ell}, \epart{k+1}{i}))_{\ell=1}^{\N}$ a candidate $J^\ast \sim (\ewght{k}{i})_{i=1}^{\N}$ is accepted with probability:
+\begin{equation}
+\label{eq:accept:ratio}
+\Upsilon_{k}^{\hkup}(J^*,i)\eqdef \qg{k} (\epart{k}{J^*}, \epart{k+1}{i})/\hkup\eqsp.
+\end{equation}
+This procedure is repeated until acceptance. Under strong mixing assumptions it can be shown, see for instance~\cite[Proposition 2]{douc:garivier:moulines:olsson:2010} and \cite[Theorem~10]{olsson:westerborn:2014b}, that the expected number of trials needed for this approach to update $(\tstat[i]{k})_{i=1}^{\N}$ to $(\tstat[i]{k+1})_{i=1}^{\N}$ is $O(\K \N)$.
+
+
+
+\bibliographystyle{apalike}
+\bibliography{biblio}
+\end{document}
