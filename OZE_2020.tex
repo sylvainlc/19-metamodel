@@ -1,0 +1,78 @@
+\documentclass[nolayout]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amsthm}
+\usepackage{twoopt}
+\usepackage{tikz}
+\usetikzlibrary{fit,positioning}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\usepackage{amssymb,color,bbm,xargs}
+\usepackage{graphicx}
+\usepackage[active]{srcltx}
+\usepackage{ifthen}
+\usepackage{enumerate}
+\usepackage{dsfont}
+\usepackage{subcaption}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+
+\begin{document}
+
+\title{Oze-Energies\\
+Metamodels to improve energy consumptions and comfort control in big buildings}
+\date{}
+
+\author{}
+
+\maketitle
+
+\subsection*{Company description}
+Created in 2006, Oze-Energies is an innovative company specialized in Instrumented Energy Optimization of existing commercial buildings. Thousands of communicating sensors, coupled with monitoring and energy optimization softwares, allow to measure and store a huge number of data (temperatures, consumptions, programming, etc...) in real time and continuously. Using data accumulated for a few weeks and its statistical learning algorithms, Oze-Energies models the energy behavior of each building. Oze-Energies experts then identify and evaluate progress actions for equal comfort and without work, acting partly on the settings of climatic equipment (heating, ventilation and air conditioning) and secondly resizing energy contracts. These actions reduce the energy bill of the owners and tenants of about 25\% on average per year. 
+
+\vspace{.2cm}
+
+{\bf Key figures}: - around 2 Million data collected per building per year - 3 Million Euros cumulated savings - over 800 000 $m^2$ monitored and optimized - a few references : Union Investment, HSBC, BNP Paribas, SwissLife, AG2R La Mondiale.
+
+\subsection*{Contact}
+Maurice Charbit (mch@oze-energies.com)\\
+Max Cohen (max.zagouri@pm.me)\\
+Sylvain Le Corff (sylvain.lecorff@gmail.com).
+
+\subsection*{Problem definition}
+This data challenge aims at introducing a new statistical model to predict and analyze energy consumptions and temperatures in a big building using observations stored in the Oze-Energies database. Physics based approaches to build an energy/temperature simulation tool in order to simulate complex building behaviors are widespread in the most complex situations. The main drawbacks of highly sophisticated softwares (TRNsys, EnergyPlus, etc.) to simulate the behavior of transient systems is the significant computational time required to train such models as they integrate many noisy sources and a huge number of parameters and require essentially massive thermodynamics computations. The most common solution is usually to simplify greatly the model using a  schematic understanding of the system or to run complex  time  and  ressource  consuming  campaigns  of  measurements where trained professionals set the parameters characterizing the physical properties of the system. Even after such campaigns, calibrating these models based on real data obtained from numerous sensors is very tricky. 
+
+The construction of the building energy model depends on the number of
+parameters  which influence the accuracy of the simulation. In order to analyze and predict future energy consumptions and future temperatures, it is necessary to calibrate the model, i.e. find the best parameters to use in the simulation tool so that the model produces similar energy consumptions as the data collected. This usually requires thousands of time-consuming simulations which is not realistic from an industrial pont of view. In this data challenge, we propose to build a simplified metamodel to mimic the outputs of the physical model based on a huge number of stored simulations. Time series of heating and cooling  consumptions and of internal temperatures associated with each set of parameters (exogenous data describing external weather conditions and data characterizing thermal behaviors of buildings) are available. The objective is to build a simplified model and to calibrate this model using the data  (cooling scheduling, heating scheduling, weather conditions, etc)...  This will allow then to use the metamodel to propose new tuned parameters to reduce energy consumptions with a given comfort.
+
+
+
+
+\subsection*{Input and output variables description}
+The file is decomposed into a training dataset  and a test dataset and each dataset contains input and output variables.
+ The input file is defined as follows. 
+\begin{enumerate}[-]
+\item Each sample is identified by a unique identification number {\bf Id}.
+\item Parameters characterizing the building: {\bf Infiltration}, {\bf Capacitance}.
+%\item {\bf Surface}, {\bf Matériau} and  {\bf Thickness} of each wall. 
+\item Temperature set points for the building management system: {\bf Comfort temperature heating}, {\bf Comfort temperature cooling}, {\bf Comfort temperature ventilation}, {\bf Reduced temperature heating}, {\bf Reduced temperature cooling}, {\bf Reduced temperature ventilation}. 
+\item Management of the building management system: for each day of a week {\bf Start time} and {\bf Stop time} for the ventilation, cooling and heating systems. 
+\item Outside temperatures at each time step (every hour for 2 months, 1344 columns).
+\end{enumerate}
+
+The output file contains the times series to be predicted hourly from the input. The output file is defined as follows. For each {\bf Id} of the input dataset, the same {\bf Id} of the output data set contains the following quantities.
+\begin{enumerate}[-]
+\item Inside temperatures at each time step (every hour for 2 months, , 1344 columns).
+\item Heating consumptions at each time step (every hour for 2 months, 1344 columns).
+\item Cooling consumptions at each time step (every hour for 2 months, 1344 columns).
+\end{enumerate}
+
+
+\subsection*{Metric}
+The performance of the model and the calibration methods are assessed by analyzing the prediction of consumptions and internal temperatures in buildings based on the input variables of the test file. The prediction error is the mean square error over all lines of the output associated with the test dataset. 
+
+\subsection*{Benchmark}
+The benchmark solution is given by a simple autoregressive model for the $3$-dimensional output variables.
+
+
+\end{document}
