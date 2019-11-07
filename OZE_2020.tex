@@ -52,19 +52,34 @@ parameters  which influence the accuracy of the simulation. In order to analyze 
 The file is decomposed into a training dataset  and a test dataset and each dataset contains input and output variables.
  The input file is defined as follows. 
 \begin{enumerate}[-]
-\item Each sample is identified by a unique identification number {\bf Id}.
-\item Parameters characterizing the building: {\bf Infiltration}, {\bf Capacitance}.
-%\item {\bf Surface}, {\bf Matériau} and  {\bf Thickness} of each wall. 
-\item Temperature set points for the building management system: {\bf Comfort temperature heating}, {\bf Comfort temperature cooling}, {\bf Comfort temperature ventilation}, {\bf Reduced temperature heating}, {\bf Reduced temperature cooling}, {\bf Reduced temperature ventilation}. 
-\item Management of the building management system: for each day of a week {\bf Start time} and {\bf Stop time} for the ventilation, cooling and heating systems. 
-\item Outside temperatures at each time step (every hour for 2 months, 1344 columns).
-\end{enumerate}
-
-The output file contains the times series to be predicted hourly from the input. The output file is defined as follows. For each {\bf Id} of the input dataset, the same {\bf Id} of the output data set contains the following quantities.
-\begin{enumerate}[-]
-\item Inside temperatures at each time step (every hour for 2 months, , 1344 columns).
-\item Heating consumptions at each time step (every hour for 2 months, 1344 columns).
-\item Cooling consumptions at each time step (every hour for 2 months, 1344 columns).
+    \item Each sample is identified by a unique identification number {\bf Id}.
+    \item Parameters characterizing the building:
+    \begin{itemize}
+        \item General information: {\bf Infiltration}, {\bf Capacitance}, {\bf Heating and Cooling Power} (4 columns)
+        \item Occupancy and usage information: {\bf Number of occupants} and {\bf Number of PCs} (2 columns)
+        \item Building geometry: {\bf Thickness} and {\bf Window area} for each of the 4 walls, as well as {\bf Thickness} for the roof and ground (10 columns)
+    \end{itemize}
+    
+    \item Temperature set points for the building management system as time series:
+    \begin{itemize}
+        \item {\bf Comfort and Reduced heating temperature} as well as a {\bf Schedule} (2016 columns)
+        \item {\bf Comfort and Reduced cooling temperature} as well as a {\bf Schedule} (2016 columns)
+        \item {\bf Ventilation temperature and volume} as well as a {\bf Schedule} (2016 columns)
+        \item {\bf Occupancy} and {\bf Percentage of active PC} (1344 columns)
+    \end{itemize}{}
+    
+    \item Weather information as time series: {\bf DNI} (Direct Normal Irradiance), {\bf IBEAM\_H},
+    {\bf IBEAM\_H}, {\bf IBEAM\_N}, {\bf IDIFF\_H}, {\bf IGLOB\_H}, {\bf RHUM} (humidity), {\bf TAMB} (ambiant temperature) (4704 columns)
+    \end{enumerate}
+    
+    The output file contains the times series to be predicted hourly from the input. The output file is defined as follows. For each {\bf Id} of the input dataset, the same {\bf Id} of the output data set contains the following quantities.
+    \begin{enumerate}[-]
+    \item {\bf Inside temperatures} (672 columns).
+    \item {\bf Heating and Cooling} consumptions for the heater, the AC and the AHU in kW/hour (2688 columns).
+    \item {\bf PC and Lights} consumptions (1344 columns).
+    \item {\bf People} (672 columns).
+    
+The training dataset will be composed of roughly 5 000 examples, the test dataset of 500.
 \end{enumerate}
 
 
