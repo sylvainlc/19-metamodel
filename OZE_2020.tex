@@ -68,8 +68,7 @@ The file is decomposed into a training dataset  and a test dataset and each data
         \item {\bf Occupancy} and {\bf Percentage of active PC} (1344 columns)
     \end{itemize}{}
     
-    \item Weather information as time series: {\bf DNI} (Direct Normal Irradiance), {\bf IBEAM\_H},
-    {\bf IBEAM\_H}, {\bf IBEAM\_N}, {\bf IDIFF\_H}, {\bf IGLOB\_H}, {\bf RHUM} (humidity), {\bf TAMB} (ambiant temperature) (4704 columns)
+    \item Weather information as time series: {\bf DNI} (Direct Normal Irradiance), {\bf IBEAM\_H} (), {\bf IBEAM\_N}, {\bf IDIFF\_H} (Diffuse Horizontal Irradiation), {\bf IGLOB\_H} (Global Horizontal Irradiance), {\bf RHUM} (humidity), {\bf TAMB} (ambiant temperature) (4704 columns)
     \end{enumerate}
     
     The output file contains the times series to be predicted hourly from the input. The output file is defined as follows. For each {\bf Id} of the input dataset, the same {\bf Id} of the output data set contains the following quantities.
