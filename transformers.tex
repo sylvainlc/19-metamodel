@@ -1,0 +1,57 @@
+\documentclass{report}
+
+\title{Transformers biblio}
+\author{Max}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+    Transformers are introduced in \cite{Vaswani2017AttentionIA} as an computing efficient alternative to sequential models for Natural Language Processing (NLP). The entire time sequence is simultaneously fed to the Transformer, which use a Self Attention mechanism. The main improvements over traditional sequential networks are (1) linear complexity in the dimension of the feature vector (2) paralellisation of computing of a sequence, as oposed to sequential computing (3) long term memory, as the Transformer can look at any input time sequence step directly. This new architecture outperformed the State of the Art in translation tasks, in both accuracy and computing time. Task is text translation.
+
+    \cite{Parikh2016ADA} introduced the concept of self attention and its relevance in NLP (same team).
+
+    \cite{Shaw2018SelfAttentionWR} is an improvement by the same autors on the positional encoding mechanism. Since all time step are fed simultaneously, an additional function is required for the network to understand the order of the sequence.
+
+
+\section{Improved reccurence}
+
+    The following papers address Transformers' lack of attention to local pattern.
+
+    \cite{Yang2019AssessingTA} investigates Transformer inability to learn positional encoding information. It shows that Self Attention Networks (SAN) trained on word reordering task have difficulties learning positional encoding. But it also shows that, when trained on machine translation, SAN learn better positional encodings than RNN.
+
+    \cite{Hao2019ModelingRF} adds a recurrent encoder to the original Transformer. Both encoder are aggregated and fed to the decoder. Slightly improve performance on BLEU, at the cost of more parameters (and most likely computation cost).
+
+    Similarly, \cite{Xu2019LeveragingLA} adds a local attention mechanism next to the existing global one, by multiplying the score matrix with a positional factor. Both attention maps are aggregated using gating functions. Outperforms original paper on BLEU, while only increasing number of parameters by 3\%.
+
+    \cite[Transformer-XL]{Dai2019TransformerXLAL} improves on the positional encoding and introduces a new reccurence mechanism, resulting in better performances for both short and long sequences.
+
+    \cite[R-Transformer]{Wang2019RTransformerRN} addresses Transformers network inability to model local structures in sequences and heavy reliance on positional encoding. Each encoder block now stands on top of a local RNN network, applied to small section of the input sequence independently and identically. This added network only focuses on local short-term dependencies.
+
+    
+
+\section{Attention}
+
+    The following papers introduce different attention mechanisms. They usually aim at improving local attention and reducing the quadratic time complexity.
+
+    \cite{Yang2019ConvolutionalSN} remplaces traditional attention maps computing with a convolution based alternative. The context becomes restricted to a given window size. Additionaly, 2D convolutions makes inter heads computations easily accessible. Results show a improvement on BLEU, while reducing computation time. It also potentially gets rid of the quadratic time complexity.
+
+    Similarly, \cite{Wu2019PayLA} computes attention maps using DepthWise convolution instead if the usual query, key, value method. It reports improved performances on BLEU while reducing the number of parameters,
+    and scaling linearly with the sequence length.
+
+    \cite{Tsai2019TransformerDA} computes attention using kernel functions.
+    
+    
+
+\section{Transformers for Time Series}
+
+\section{Bonus}
+
+    \cite{Li2019InformationAF} applies routing by aggreements to compute attention, resulting in improved performances on text translation, at the cost of a higher number of parameters and computation time.
+
+
+\bibliographystyle{apalike}
+\bibliography{biblio}
+\end{document}
