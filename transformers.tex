@@ -30,8 +30,8 @@
 
     \cite[R-Transformer]{Wang2019RTransformerRN} addresses Transformers network inability to model local structures in sequences and heavy reliance on positional encoding. Each encoder block now stands on top of a local RNN network, applied to small section of the input sequence independently and identically. This added network only focuses on local short-term dependencies.
 
+    \cite{Xu2019GatedGS} groups MHA heads to focus on a more local context and improve computation efficiency. Task is QA.
     
-
 \section{Attention}
 
     \subsection{Introduction}
@@ -40,7 +40,13 @@
 
     Building on this new attention mechanism, \cite{Xu2015ShowAA} implements captionning algorithm that automatically learns to describe the content of images. It also introduces a new attention mechanism called hard attention, that only focuses on part on the input, in a stochastic fashion, unlike soft attention which is deterministic.
 
-    \cite{Luong2015EffectiveAT} introduce two new attention mechanisms : global attention, which is largely based on the provious soft attention, and local attention, wich is a diferenciable alternative to hard attention. The latter aims at working on longer sequences.
+    \cite{Luong2015EffectiveAT} introduces two new attention mechanisms : global attention, which is largely based on the provious soft attention, and local attention, wich is a diferenciable alternative to hard attention. The latter aims at working on longer sequences.
+
+    \cite{Cheng2016LongSM} introduces self attention, built on top of an LSTM, for NLP tasks (sentiment analysis).
+
+    \cite{Zhu2019AnES} compares various attention methods (encoder-decoder attention, self attention, convolutions, deformable convolutions, dynamic convolutions). It highlights their complexity, their use of query and/or keys, their integration in deep learning networks.
+
+    \cite{weng2018attention} for a SotA in attention.
 
     \subsection{Applications for transformers}
     The following papers introduce different attention mechanisms. They usually aim at improving local attention and reducing the quadratic time complexity.
@@ -52,6 +58,7 @@
 
     \cite{Tsai2019TransformerDA} computes attention using kernel functions.
     
+    \cite{Gangi2019AdaptingTT} adds convolutional layers before the transformer's encoder input, in order to reduce the impact of quadratic time complexity. It also introduces a distance penalty on the score matrix, to better focus on local patterns.
     
 
 \section{Transformers for Time Series}
