@@ -1,4 +1,4 @@
-\documentclass{report}
+\documentclass{article}
 
 \title{Transformers biblio}
 \author{Max}
@@ -34,6 +34,15 @@
 
 \section{Attention}
 
+    \subsection{Introduction}
+
+    Encoder - Decoder architecture are commonly used for sequence to sequence translation, but they often rely on the encoder's ability to compress all information in an fixed-length vector. \cite{Bahdanau2014NeuralMT} introduce a soft attention layer, built on top of RNN-like layers, that allows the decoder to choose what input sequence position to attend to. This layer is based on an alignment model, that compares each input and hidden positions. It is implemented as a feed forward network.
+
+    Building on this new attention mechanism, \cite{Xu2015ShowAA} implements captionning algorithm that automatically learns to describe the content of images. It also introduces a new attention mechanism called hard attention, that only focuses on part on the input, in a stochastic fashion, unlike soft attention which is deterministic.
+
+    \cite{Luong2015EffectiveAT} introduce two new attention mechanisms : global attention, which is largely based on the provious soft attention, and local attention, wich is a diferenciable alternative to hard attention. The latter aims at working on longer sequences.
+
+    \subsection{Applications for transformers}
     The following papers introduce different attention mechanisms. They usually aim at improving local attention and reducing the quadratic time complexity.
 
     \cite{Yang2019ConvolutionalSN} remplaces traditional attention maps computing with a convolution based alternative. The context becomes restricted to a given window size. Additionaly, 2D convolutions makes inter heads computations easily accessible. Results show a improvement on BLEU, while reducing computation time. It also potentially gets rid of the quadratic time complexity.
