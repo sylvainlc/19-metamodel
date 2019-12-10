@@ -1,0 +1,41 @@
+\documentclass{article}
+
+\title{Metamodels biblio}
+\author{Max}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+    \cite{Simpson2001MetamodelsFC} introduces the concept of metamodels for engineering  analysis, why and how they are usually used. Section 2 is a review of the main metamodels techniques, among which Neural networks, as well as methods to efficiently explore the input space (Design of Experiment). In section 3, it describes an application for engineering  design, that highlights a number of mistakes and pitfalls one may encounter while designing a metamodel. Section 4 focuses on how to avoid these mistakes, as well as general recommendations.
+
+    In a more recent review, \cite{Wang2006ReviewOM} includes sections on model validation, Design Space Exploration, as well as optimization methods based on metamodels: Metamodel-based Design Optimization (MBDO) Strategies and Multi objective Optimization (MOO). 
+
+    \cite{Parnianifard2018AnOO} is a review of metamodels use for optimization under uncertainty, and includes an in-depth comparison of methods used in 150 previous papers. Also discusses model validation as well as multi objective optimization.
+
+\section{Surrogate models}
+
+    \cite{Ankenman2008StochasticKF} provides a mathematical foundation for stochastic kriging as a metamodel method for deterministic computer experiments to modeling responses from stochastic simulation.
+
+    \cite{Papadrakakis2002ReliabilitybasedSO} use neural networks as a metamodel for optimizing large scale structural systems. Neural networks were chosen for their approximation qualities, and the dataset is divided into equally spaced distances samples. The chosen optimization method is evolution strategies.
+
+    \cite{Jia2015SurrogateMF} implements kriging surrogate models on a synthetic dataset storm surge dataset. The resulting metamodel is showed to fit the dataset, and some validation methods are described.
+
+    \cite{Tripathy2018DeepUL} demonstrates the use of deep neural networks to construct surrogate models for numerical simulators, in order to perform uncertainty quantification.
+
+\section{Validation methods}
+
+    \cite{Dubourg2011MetamodelbasedIS} uses kriging methods to metamodel a failure of system probability function. It introduces a hybrid strategy to evaluate the metamodel error, using the metamodel itself and an auxiliary probabilistic classification function.
+
+    \cite{Iooss2009NumericalSO} investigates a new validation method for metamodel based on the Feuillard design algorithm. The aim is to test the metamodel in points of the input space where there are no training sample. This method is showed to be more efficient and less time consuming than traditional cross validation methods.
+
+
+\section{Bonus}
+    \cite{Grandjacques2015AnalyseDS} didn't read the entire 164 pages, but title seemed relevant.
+
+
+\bibliographystyle{apalike}
+\bibliography{biblio}
+\end{document}
